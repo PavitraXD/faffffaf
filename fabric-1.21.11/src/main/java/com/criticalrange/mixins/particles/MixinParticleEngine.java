@@ -17,12 +17,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
- * Particle control mixin for Minecraft 1.21.2+
+ * Particle control mixin based on Sodium Extra pattern
  * Controls particle rendering for better performance
- * Uses version-specific method signatures
  */
 @Mixin(ParticleManager.class)
 public class MixinParticleEngine {
+
 
     @Inject(method = "addBlockBreakParticles", at = @At(value = "HEAD"), cancellable = true)
     public void vulkanmodExtra$controlBlockBreakParticles(BlockPos pos, BlockState state, CallbackInfo ci) {
@@ -44,12 +44,12 @@ public class MixinParticleEngine {
         }
     }
 
-    @Inject(method = "addParticle(Lnet/minecraft/particle/ParticleEffect;DDDDDD)Lnet/minecraft/client/particle/Particle;", at = @At(value = "HEAD"), cancellable = true)
-    public Particle vulkanmodExtra$controlParticleCreation(ParticleEffect particleOptions, double x, double y, double z, double velocityX, double velocityY, double velocityZ, CallbackInfoReturnable<Particle> cir) {
+    @Inject(method = "createParticle", at = @At(value = "HEAD"), cancellable = true)
+    public void vulkanmodExtra$controlParticleCreation(ParticleEffect particleOptions, double d, double e, double f, double g, double h, double i, CallbackInfoReturnable<Particle> cir) {
         if (VulkanModExtra.CONFIG != null && VulkanModExtra.CONFIG.particleSettings != null) {
             try {
                 var particleKey = Registries.PARTICLE_TYPE.getKey(particleOptions.getType());
-                if (particleKey.isEmpty()) return null;
+                if (particleKey.isEmpty()) return;
 
                 String particleName = particleKey.get().getValue().getPath();
                 if (!shouldRenderParticle(VulkanModExtra.CONFIG.particleSettings, particleName)) {
@@ -59,7 +59,6 @@ public class MixinParticleEngine {
                 // Ignore particle errors to prevent crashes
             }
         }
-        return null;
     }
 
     @Unique
@@ -69,7 +68,7 @@ public class MixinParticleEngine {
         if (!settings.allParticles) {
             return false;
         }
-
+        
         // If master toggle is enabled, check individual settings
         return switch (particleName.toLowerCase()) {
             case "ambient_entity_effect" -> settings.ambientEntityEffect;

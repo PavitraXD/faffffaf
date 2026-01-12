@@ -2,11 +2,6 @@ package com.criticalrange.mixins.render;
 
 import com.criticalrange.VulkanModExtra;
 import net.minecraft.client.render.entity.ItemFrameEntityRenderer;
-import net.minecraft.client.render.entity.state.ItemFrameEntityRenderState;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.render.state.CameraRenderState;
-import net.minecraft.entity.decoration.ItemFrameEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -14,53 +9,37 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
- * Item frame rendering control mixin for Minecraft 1.21.9+
- * 
- * MAJOR CHANGE in 1.21.9:
- * - EntityRenderer now uses RenderState objects with OrderedRenderCommandQueue
- * - render() signature: (ItemFrameEntityRenderState, MatrixStack, OrderedRenderCommandQueue, CameraRenderState)V
- * - VertexConsumerProvider replaced with OrderedRenderCommandQueue
- * 
- * Uses require=0 to fail gracefully if signature doesn't match.
+ * UNIVERSAL PATTERN: Multi-version entity rendering control
+ *
+ * Copy-paste template for any entity renderer:
+ * 1. Replace "ItemFrame" with your entity type
+ * 2. Replace "itemFrame" with your config setting
+ * 3. Replace ItemFrameEntityRenderer with your specific renderer
+ * 4. Replace ItemFrameEntity with your entity class
  */
 @Mixin(ItemFrameEntityRenderer.class)
 public class MixinItemFrameRenderer {
 
     /**
-     * 1.21.9+: Render state-based render method with OrderedRenderCommandQueue
+     * 1.21.1: Entity-based render method
      */
-    @Inject(method = "render(Lnet/minecraft/client/render/entity/state/ItemFrameEntityRenderState;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;Lnet/minecraft/client/render/state/CameraRenderState;)V",
+    @Inject(method = "render(Lnet/minecraft/entity/decoration/ItemFrameEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
             at = @At("HEAD"), cancellable = true, require = 0)
-    private void vulkanmodExtra$controlItemFrameRendering(ItemFrameEntityRenderState state, MatrixStack matrices, 
-            OrderedRenderCommandQueue queue, CameraRenderState cameraState, CallbackInfo ci) {
-        if (VulkanModExtra.CONFIG != null && VulkanModExtra.CONFIG.renderSettings != null && 
-            !VulkanModExtra.CONFIG.renderSettings.itemFrame) {
+    private void controlRendering1_21_1(CallbackInfo ci) {
+        if (VulkanModExtra.CONFIG != null && !VulkanModExtra.CONFIG.renderSettings.itemFrame) {
             ci.cancel();
         }
     }
 
-    /**
-     * hasLabel method using entity parameter - may have changed in 1.21.9
-     */
-    @Inject(method = "hasLabel(Lnet/minecraft/entity/decoration/ItemFrameEntity;D)Z", 
-            at = @At("HEAD"), cancellable = true, require = 0)
-    private void vulkanmodExtra$controlItemFrameLabel(ItemFrameEntity entity, double distance, 
-            CallbackInfoReturnable<Boolean> cir) {
-        if (VulkanModExtra.CONFIG != null && VulkanModExtra.CONFIG.renderSettings != null && 
-            !VulkanModExtra.CONFIG.renderSettings.itemFrameNameTag) {
-            cir.setReturnValue(false);
-        }
-    }
 
     /**
-     * Alternative hasLabel for 1.21.9+ if signature changed to use RenderState
+     * Universal: hasLabel method (works across all versions)
+     * For 1.21.1: hasLabel(ItemFrameEntity)
+     * For 1.21.2+: hasLabel() with no parameters
      */
-    @Inject(method = "hasLabel(Lnet/minecraft/client/render/entity/state/ItemFrameEntityRenderState;)Z", 
-            at = @At("HEAD"), cancellable = true, require = 0)
-    private void vulkanmodExtra$controlItemFrameLabelRenderState(ItemFrameEntityRenderState state, 
-            CallbackInfoReturnable<Boolean> cir) {
-        if (VulkanModExtra.CONFIG != null && VulkanModExtra.CONFIG.renderSettings != null && 
-            !VulkanModExtra.CONFIG.renderSettings.itemFrameNameTag) {
+    @Inject(method = "hasLabel", at = @At("HEAD"), cancellable = true, require = 0)
+    private void controlNameTag(CallbackInfoReturnable<Boolean> cir) {
+        if (VulkanModExtra.CONFIG != null && !VulkanModExtra.CONFIG.renderSettings.itemFrameNameTag) {
             cir.setReturnValue(false);
         }
     }

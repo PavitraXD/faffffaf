@@ -29,7 +29,7 @@
   "depends": {
     "fabricloader": ">=0.17.2",
     "fabric-api": "*",
-    "minecraft": "~1.21.11",
+    "minecraft": "~1.21.1",
     "vulkanmod": ">=0.5.3"
   },
   "suggests": {
