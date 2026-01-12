@@ -14,9 +14,9 @@ jobs:
         distribution: 'temurin'
         java-version: 21
     - name: Build
-      run: ./gradlew :fabric-1.21.11:build
+      run: ./gradlew :fabric-1.21.10:build
     - name: Upload JAR
       uses: actions/upload-artifact@v4
       with:
-        name: vulkanmod-extra-fabric-1.21.11
-        path: fabric-1.21.11/build/libs/*.jar
+        name: vulkanmod-extra-fabric-1.21.10
+        path: fabric-1.21.10/build/libs/*.jar
