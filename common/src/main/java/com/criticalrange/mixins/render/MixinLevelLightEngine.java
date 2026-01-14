@@ -19,47 +19,6 @@ public class MixinLevelLightEngine {
 
     @Inject(at = @At("HEAD"), method = "doLightUpdates", cancellable = true)
     public void vulkanmodExtra$throttleLightUpdates(CallbackInfoReturnable<Integer> cir) {
-        try {
-            // Safety check - if config is null, let vanilla handle everything
-            if (VulkanModExtra.CONFIG == null) {
-                return;
-            }
-
-            // If light updates are enabled, apply mild throttling for performance
-            if (VulkanModExtra.CONFIG.renderSettings.lightUpdates) {
-                throttleCounter++;
-                
-                // Very conservative throttling - only skip every 4th update
-                // This provides performance benefit without breaking critical lighting
-                if (throttleCounter % 4 == 0) {
-                    cir.setReturnValue(0);
-                }
-                
-                // Reset counter to prevent overflow
-                if (throttleCounter > 1000) {
-                    throttleCounter = 0;
-                }
-                return;
-            }
-            
-            // If disabled: Apply heavy throttling but NEVER completely block
-            // This maintains basic lighting functionality while reducing performance impact
-            throttleCounter++;
-            
-            // When disabled, only allow every 8th light update
-            // This gives significant performance boost while maintaining basic lighting
-            if (throttleCounter % 8 != 0) {
-                cir.setReturnValue(0);
-            }
-            
-            // Reset counter to prevent overflow
-            if (throttleCounter > 1000) {
-                throttleCounter = 0;
-            }
-            
-        } catch (Exception e) {
-            // If anything goes wrong, let vanilla lighting work normally
-            VulkanModExtra.LOGGER.warn("Light updates mixin error: {}", e.getMessage());
-        }
+        // Disabled - let vanilla handle all lighting for proper player brightness
     }
 }
