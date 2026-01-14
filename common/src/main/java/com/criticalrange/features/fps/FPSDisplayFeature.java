@@ -77,7 +77,6 @@ public class FPSDisplayFeature extends BaseFeature {
         
         switch (contrast) {
             case NONE -> {
-                // Plain white text (ARGB format for 1.21.6+)
                 drawContext.drawText(minecraft.textRenderer, fpsText, x, y, 0xFFFFFFFF, false);
             }
             case BACKGROUND -> {
@@ -86,11 +85,9 @@ public class FPSDisplayFeature extends BaseFeature {
                 int textWidth = minecraft.textRenderer.getWidth(fpsText);
                 int fontHeight = minecraft.textRenderer.fontHeight;
                 drawContext.fill(x - 1, y - 1, x + textWidth + 1, y + fontHeight + 1, 0x90505050);
-                // White text on top
                 drawContext.drawText(minecraft.textRenderer, fpsText, x, y, 0xFFFFFFFF, false);
             }
             case SHADOW -> {
-                // White text with drop shadow
                 drawContext.drawText(minecraft.textRenderer, fpsText, x, y, 0xFFFFFFFF, true);
             }
         }
