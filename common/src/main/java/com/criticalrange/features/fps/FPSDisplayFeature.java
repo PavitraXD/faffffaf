@@ -50,45 +50,8 @@ public class FPSDisplayFeature extends BaseFeature {
      * Render the FPS display
      */
     public void render(DrawContext drawContext, float partialTicks) {
-        if (!isEnabled() || fpsCounter == null) {
-            return;
-        }
-
-        MinecraftClient minecraft = getMinecraft();
-        if (minecraft == null) {
-            return;
-        }
-
-        VulkanModExtraConfig config = getConfig();
-        if (config == null) {
-            return;
-        }
-
-        String fpsText = buildFPSText(config);
-
-        // Position based on overlay corner setting
-        int screenWidth = minecraft.getWindow().getScaledWidth();
-        int screenHeight = minecraft.getWindow().getScaledHeight();
-        int x = calculateXPosition(screenWidth);
-        int y = calculateYPosition(screenHeight);
-
-        // Handle contrast modes
-        var contrast = config.extraSettings.textContrast;
-        
-        switch (contrast) {
-            case NONE -> {
-                drawContext.drawText(minecraft.textRenderer, Text.literal(fpsText), x, y, 0xFFFFFFFF, false);
-            }
-            case BACKGROUND -> {
-                int textWidth = minecraft.textRenderer.getWidth(fpsText);
-                int fontHeight = minecraft.textRenderer.fontHeight;
-                drawContext.fill(x - 1, y - 1, x + textWidth + 1, y + fontHeight + 1, 0x90505050);
-                drawContext.drawText(minecraft.textRenderer, Text.literal(fpsText), x, y, 0xFFFFFFFF, false);
-            }
-            case SHADOW -> {
-                drawContext.drawText(minecraft.textRenderer, Text.literal(fpsText), x, y, 0xFFFFFFFF, true);
-            }
-        }
+        // Disabled for 1.21.11 compatibility - drawText API changed
+        return;
     }
 
     private String buildFPSText(VulkanModExtraConfig config) {
