@@ -77,18 +77,16 @@ public class FPSDisplayFeature extends BaseFeature {
         
         switch (contrast) {
             case NONE -> {
-                drawContext.drawText(minecraft.textRenderer, fpsText, x, y, 0xFFFFFFFF, false);
+                drawContext.drawText(minecraft.textRenderer, Text.literal(fpsText), x, y, 0xFFFFFFFF, false);
             }
             case BACKGROUND -> {
-                // Draw background like Minecraft's debug screen (F3)
-                // Background color: 0x90505050 (from DebugHud.class constant pool)
                 int textWidth = minecraft.textRenderer.getWidth(fpsText);
                 int fontHeight = minecraft.textRenderer.fontHeight;
                 drawContext.fill(x - 1, y - 1, x + textWidth + 1, y + fontHeight + 1, 0x90505050);
-                drawContext.drawText(minecraft.textRenderer, fpsText, x, y, 0xFFFFFFFF, false);
+                drawContext.drawText(minecraft.textRenderer, Text.literal(fpsText), x, y, 0xFFFFFFFF, false);
             }
             case SHADOW -> {
-                drawContext.drawText(minecraft.textRenderer, fpsText, x, y, 0xFFFFFFFF, true);
+                drawContext.drawText(minecraft.textRenderer, Text.literal(fpsText), x, y, 0xFFFFFFFF, true);
             }
         }
     }
