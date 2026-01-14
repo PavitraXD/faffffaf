@@ -10,7 +10,6 @@
 		"details.MixinWeatherRenderer",
 		"details.MixinCelestialRendering",
 		"details.MixinSkyGradient",
-		"render.MixinLevelLightEngine",
 		"extra.MixinCamera",
 		"details.MixinCloudRendering",
 		"extra.MixinInGameHud",
